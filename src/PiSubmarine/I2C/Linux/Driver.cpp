@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace
 {
@@ -28,7 +29,13 @@ namespace PiSubmarine::I2C::Linux
 {
     Driver::Driver(const std::filesystem::path& device)
     {
-        m_Logger = spdlog::get("I2C::Linux::Driver(" + device.string() + ")");
+        auto loggerName = "I2C::Linux::Driver(" + device.string() + ")";
+
+        m_Logger = spdlog::get(loggerName);
+        if (!m_Logger)
+        {
+            m_Logger = spdlog::stdout_color_mt(loggerName);
+        }
         m_DeviceFd = open(device.c_str(), O_RDWR);
         if (m_DeviceFd < 0)
         {
