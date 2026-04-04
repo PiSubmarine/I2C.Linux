@@ -28,11 +28,13 @@ namespace PiSubmarine::I2C::Linux
 {
     Driver::Driver(const std::filesystem::path& device)
     {
+        m_Logger = spdlog::get("I2C::Linux::Driver(" + device.string() + ")");
         m_DeviceFd = open(device.c_str(), O_RDWR);
         if (m_DeviceFd < 0)
         {
             throw std::runtime_error("Failed to open I2C device: " + device.string());
         }
+        m_Logger->info("I2C device opened: {}", m_DeviceFd);
     }
 
     Driver::~Driver()
@@ -40,6 +42,11 @@ namespace PiSubmarine::I2C::Linux
         if (m_DeviceFd >= 0)
         {
             close(m_DeviceFd);
+            m_Logger->info("I2C device closed: {}", m_DeviceFd);
+        }
+        else
+        {
+            m_Logger->error("Driver destroyed, file descriptor invalid: {}", m_DeviceFd);
         }
     }
 
@@ -53,8 +60,10 @@ namespace PiSubmarine::I2C::Linux
         ioctl_data.msgs = messages;
         ioctl_data.nmsgs = 1;
 
-        if (ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data) < 0)
+        auto ret = ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data);
+        if (ret < 0)
         {
+            m_Logger->error("Failed to write to I2C device: {} - {}", ret, std::strerror(errno));
             return false;
         }
         return true;
@@ -70,8 +79,10 @@ namespace PiSubmarine::I2C::Linux
         ioctl_data.msgs = messages;
         ioctl_data.nmsgs = 1;
 
-        if (ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data) < 0)
+        auto ret = ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data);
+        if (ret < 0)
         {
+            m_Logger->error("Failed to read from I2C device: {} - {}", ret, std::strerror(errno));
             return false;
         }
         return true;
@@ -89,8 +100,10 @@ namespace PiSubmarine::I2C::Linux
         ioctl_data.msgs = messages;
         ioctl_data.nmsgs = 2;
 
-        if (ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data) < 0)
+        auto ret = ioctl(m_DeviceFd, I2C_RDWR, &ioctl_data);
+        if (ret < 0)
         {
+            m_Logger->error("Failed to read from I2C device: {} - {}", ret, std::strerror(errno));
             return false;
         }
         return true;

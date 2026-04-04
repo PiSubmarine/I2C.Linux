@@ -7,4 +7,7 @@ target_include_directories(${PISUBMARINE_MODULE_NAME} PUBLIC "../public")
 PiSubmarineInitTarget(${PISUBMARINE_MODULE_NAME})
 
 PiSubmarineAddDependency("https://github.com/PiSubmarine/I2C.Api.git" "")
-target_link_libraries(${PISUBMARINE_MODULE_NAME} PiSubmarine.I2C.Api)
+target_link_libraries(${PISUBMARINE_MODULE_NAME} PUBLIC PiSubmarine.I2C.Api)
+
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(${PISUBMARINE_MODULE_NAME} PUBLIC spdlog::spdlog)

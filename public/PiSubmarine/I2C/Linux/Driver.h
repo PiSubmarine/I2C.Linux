@@ -2,6 +2,7 @@
 
 #include "PiSubmarine/I2C/Api/IDriver.h"
 #include <filesystem>
+#include <spdlog/spdlog.h>
 
 namespace PiSubmarine::I2C::Linux
 {
@@ -17,6 +18,7 @@ namespace PiSubmarine::I2C::Linux
 
     private:
         int m_DeviceFd = 0;
+        std::shared_ptr<spdlog::logger> m_Logger;
 
     };
 }
