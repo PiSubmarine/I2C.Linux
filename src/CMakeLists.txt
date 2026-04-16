@@ -9,5 +9,8 @@ PiSubmarineInitTarget(${PISUBMARINE_MODULE_NAME})
 PiSubmarineAddDependency("https://github.com/PiSubmarine/I2C.Api.git" "")
 target_link_libraries(${PISUBMARINE_MODULE_NAME} PUBLIC PiSubmarine.I2C.Api)
 
+PiSubmarineAddDependency("https://github.com/PiSubmarine/Error.Api.git" "")
+target_link_libraries(${PISUBMARINE_MODULE_NAME} PUBLIC PiSubmarine.Error.Api)
+
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${PISUBMARINE_MODULE_NAME} PUBLIC spdlog::spdlog)
